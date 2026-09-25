@@ -74,31 +74,21 @@ MongoClient.connect(db, (err, db) => {
         extended: false
     }));
 
-    // Enable session management using express middleware
-    app.use(session({
-        // genid: (req) => {
-        //    return genuuid() // use UUIDs for session IDs
-        //},
-        secret: cookieSecret,
-        // Both mandatory in Express v4
-        saveUninitialized: true,
-        resave: true
-        /*
-        // Fix for A5 - Security MisConfig
-        // Use generic cookie name
+        app.use(session({
+            
+        // T4 FIX: Generic cookie name (A5 - Security MisConfig)
         key: "sessionId",
-        */
+        secret: cookieSecret,
+        saveUninitialized: true,
+        resave: true,
 
-        /*
-        // Fix for A3 - XSS
-        // TODO: Add "maxAge"
+        // T4 FIX: Harden session cookie (CWE-384, CWE-1004)
         cookie: {
-            httpOnly: true
-            // Remember to start an HTTPS server to get this working
-            // secure: true
+            httpOnly: true,      // JS cannot read the cookie (XSS mitigation)
+            secure: false,       // Set to true when running behind HTTPS
+            sameSite: "strict",  // CSRF mitigation
+            maxAge: 30 * 60 * 1000 // 30 minutes
         }
-        */
-
     }));
 
     /*
