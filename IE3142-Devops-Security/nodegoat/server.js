@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 const express = require("express");
 const favicon = require("serve-favicon");
@@ -123,12 +123,9 @@ MongoClient.connect(db, (err, db) => {
 
     // Template system setup
     swig.setDefaults({
-        // Autoescape disabled
-        autoescape: false
-        /*
-        // Fix for A3 - XSS, enable auto escaping
-        autoescape: true // default value
-        */
+    // Fix for A3 - XSS (CWE-79): re-enable auto escaping so user-controlled
+    // input (e.g. firstName) is HTML-encoded instead of rendered as raw HTML/JS.
+    autoescape: true
     });
 
     // Insecure HTTP connection
